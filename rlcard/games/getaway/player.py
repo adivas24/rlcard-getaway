@@ -14,8 +14,9 @@ class GetAwayPlayer():
         self.player_id = GetAwayPlayer.playerCount
         GetAwayPlayer.playerCount += 1
         self.player_strategy = strategy
+        self.alive = True
 
-    def get_id(self):
+    def get_player_id(self):
         ''' Player id
         '''
         return self.player_id
@@ -57,6 +58,7 @@ class GetAwayPlayer():
             if chosen_idx >= 0 and chosen_idx < len(legal_cards):
                 return legal_cards[chosen_idx]
 
+    # TODO: THIS NEEDS TO BE RELOCATED
     def strategy(self, state, legal_cards):
         ''' Playing strategy
         '''
@@ -86,3 +88,12 @@ class GetAwayPlayer():
         if legal_card_set == set():
             legal_card_set = self.hand
         return self.strategy(state, legal_card_set)
+
+    def get_state(self, pubilc_cards, legal_actions):
+        ''' Returns current player state.
+        '''
+        return {
+            "hand": [c.get_index() for c in self.hand],
+            "public_cards": [c.get_index() for c in pubilc_cards],
+            "legal_actions": legal_actions
+        }

@@ -56,4 +56,9 @@ class GetAwayCard():
         '''
         return self.suit is suit
 
+    def get_index(self):
+        ''' Unique index for card
+        '''
+        return hash(self)
+
 ACE_OF_SPADES = GetAwayCard(Suit.S, "A")
