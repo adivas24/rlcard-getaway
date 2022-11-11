@@ -21,6 +21,8 @@ class GetAwayPlayer():
         '''
         return self.player_id
 
+    def get_player_cards(self):
+        return self.hand
     def add_card(self, card):
         ''' Add card to hand
         '''

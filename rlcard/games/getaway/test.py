@@ -16,7 +16,7 @@ g.init_game()
 # g.print_state()
 current_lead = -1
 while True:
-    current_lead = g.next_round(leading_player=current_lead, verbose = False)
+    current_lead = g.next_round(leading_player=current_lead, verbose = True)
     # g.print_state()
     if current_lead == -1:
         break

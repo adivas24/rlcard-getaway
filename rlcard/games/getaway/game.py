@@ -4,11 +4,14 @@ Game Class for Get Away
 
 import random
 from dealer import GetAwayDealer
-from card import Suit
+from card import Suit,GetAwayCard
 
+
+ACE_OF_SPADES = GetAwayCard(Suit.S, "A")
 class GetAwayGame():
     ''' Game environment
     '''
+
     def __init__(self):
         self.players = []
         self.waste_pile = []
@@ -39,10 +42,15 @@ class GetAwayGame():
         print(self.waste_pile)
         print("End of current state description")
 
-    def next_round(self, leading_player, verbose = False):
+    def starting_player(self):
+        print("Finding player with Ace of spades")
+        for player in self.players:
+            if ACE_OF_SPADES in player.hand:
+                return player.player_id
+    def next_round(self, leading_player, verbose=False):
         ''' General round
         '''
-        if self.num_players-1 == len(self.winners):
+        if self.num_players - 1 == len(self.winners):
             if verbose:
                 print("Game has concluded")
             return -1
@@ -53,20 +61,22 @@ class GetAwayGame():
         next_round_leader = None
         if self.round_counter == 1:
             first_round = True
-            leading_player = 0
+            leading_player = self.starting_player()
             leading_suit = Suit.S
         else:
             first_round = False
             leading_suit = None
         future_leader = tuple()
         for i in range(self.num_players):
-            player_id = (i+leading_player)% self.num_players
+            player_id = (i + leading_player) % self.num_players
             if verbose:
                 print("Turn: Player ", player_id)
             current_player = self.players[player_id]
             if current_player.no_cards():
                 if not trick and player_id not in self.winners:
-                    draw_size = len(self.waste_pile)-(self.num_players-len(self.winners))
+                # if not trick and player_id not in self.winners:
+                    draw_size = len(self.waste_pile) - 1
+                    # draw_size = len(self.waste_pile) - (self.num_players - len(self.winners))
                     random_index = random.randrange(draw_size)
                     current_player.add_card(self.waste_pile.pop(random_index))
                 else:
@@ -74,7 +84,7 @@ class GetAwayGame():
                         print("This player has already won.")
                     self.winners[player_id] = self.winners.get(player_id, self.round_counter)
                     continue
-            card_played = current_player.next_round(leading_suit, first = first_round)
+            card_played = current_player.next_round(leading_suit, first=first_round)
             if verbose:
                 print("Player ", player_id, "played card: ", str(card_played))
             action = tuple([player_id, card_played])
@@ -92,3 +102,19 @@ class GetAwayGame():
             next_round_leader = future_leader[0]
         self.waste_pile += trick
         return next_round_leader
+    def get_num_players(self):
+        ''' Return the number of players in Limit Texas Hold'em
+
+        Returns:
+            (int): The number of players in the game
+        '''
+        return self.num_players
+
+    def get_legal_actions(self):
+        ''' Return the legal actions for current player
+
+        Returns:
+            (list): A list of legal actions
+        '''
+
+        return self.round.get_legal_actions(self.players, self.round.current_player)
