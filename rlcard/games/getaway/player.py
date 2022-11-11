@@ -2,7 +2,7 @@
 Player class for Get Away
 '''
 import random
-from card import ACE_OF_SPADES
+from rlcard.games.getaway.card import ACE_OF_SPADES
 
 class GetAwayPlayer():
     ''' Defines a player

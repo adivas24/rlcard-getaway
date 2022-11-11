@@ -3,8 +3,8 @@ Game Class for Get Away
 '''
 
 import random
-from dealer import GetAwayDealer
-from card import Suit,GetAwayCard
+from rlcard.games.getaway.dealer import GetAwayDealer
+from rlcard.games.getaway.card import Suit,GetAwayCard
 
 
 ACE_OF_SPADES = GetAwayCard(Suit.S, "A")

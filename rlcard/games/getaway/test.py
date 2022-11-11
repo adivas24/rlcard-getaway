@@ -2,8 +2,8 @@
 '''
 
 
-from game import GetAwayGame
-from player import GetAwayPlayer
+from rlcard.games.getaway.game import GetAwayGame
+from rlcard.games.getaway.player import GetAwayPlayer
 
 g = GetAwayGame()
 # Adding players

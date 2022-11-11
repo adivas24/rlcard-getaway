@@ -2,7 +2,7 @@
 Dealer class for Get Away
 '''
 import random
-from card import Suit, GetAwayCard, ranks
+from rlcard.games.getaway.card import Suit, GetAwayCard, ranks
 
 class GetAwayDealer():
     ''' Defines dealing methods
