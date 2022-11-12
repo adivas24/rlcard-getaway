@@ -11,7 +11,7 @@ DEFAULT_GAME_CONFIG = {
     'game_num_players': 2,
 }
 
-class GetAway(Env):
+class GetAwayEnv(Env):
 
     def __init__(self, config):
         self.name = 'getaway'

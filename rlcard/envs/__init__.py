@@ -52,5 +52,3 @@ register(
     env_id='getaway',
     entry_point='rlcard.envs.getaway:GetAwayEnv',
 )
-
-

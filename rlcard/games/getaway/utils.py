@@ -6,7 +6,7 @@ from collections import OrderedDict
 import rlcard
 
 # from rlcard.games.getaway.card import GetAwayCard as Card
-from rlcard.games.getaway.card import Suit, GetAwayCard, ranks
+from rlcard.games.getaway.card import Suit, GetAwayCard, ranks, rev_ranks
 # Read required docs
 # ROOT_PATH = rlcard.__path__[0]
 
@@ -18,9 +18,21 @@ from rlcard.games.getaway.card import Suit, GetAwayCard, ranks
 ACTION_SPACE = {}
 for suit in Suit.__members__.values():
     for rank in ranks:
-        ACTION_SPACE[GetAwayCard(suit, rank)] = GetAwayCard(suit,rank).get_index()
+        card = GetAwayCard(suit, rank)
+        ACTION_SPACE[str(card)] = card.get_index()
+ACTION_SPACE['draw'] = 52
 
 ACTION_LIST = list(ACTION_SPACE.keys())
+
+def card_from_index(index):
+    ''' Fetches card from its index
+    '''
+    return GetAwayCard(Suit(index//13), rev_ranks[index%13 + 2])
+
+def action2card(action): 
+    ''' Fetches card from action
+    '''
+    return card_from_index(ACTION_SPACE[action])
 # print(ACTION_SPACE,ACTION_LIST)
 # # a map of color to its index
 # COLOR_MAP = {'r': 0, 'g': 1, 'b': 2, 'y': 3}

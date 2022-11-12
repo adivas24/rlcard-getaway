@@ -2,68 +2,53 @@
 Get Away Round
 '''
 
+from rlcard.games.getaway.card import Suit
+from rlcard.games.getaway.utils import action2card
+
 class GetAwayRound():
     ''' Round class for Get Away
     '''
     round_number = 0
-    def __init__(self, leading_player):
+    def __init__(self, leading_player, game):
         self.trick = []
         GetAwayRound.round_number += 1
-        self.leading_player = leading_player
         self.current_player = leading_player
-        self.next_leading_player = None
+        self.next_leading_player_card = None
         self.leading_suit = None
+        self.game = game
+        self.done = False
 
-        def step(self, action):
-            if GetAwayRound.round_number == 1:
-                first_round = True
-            leading_suit = action2card(action).suit
+    def step(self, action):
+        ''' Takes one step in the round
+        '''
+        if GetAwayRound.round_number == 1:
+            first_round = True
+            self.leading_suit = Suit.S
+        if action == "draw":
+            draw_size = len(self.game.waste_pile) - 1
+            random_index = self.game.random.randrange(draw_size)
+            card_played = self.game.waste_pile.pop(random_index)
+        card_played = action2card(action)
+        self.trick.append(card_played)
+        if self.leading_suit is None or self.next_leading_player_card is None:
+            self.leading_suit = card_played.suit
+            self.next_leading_player_card = (card_played, self.current_player)
+        elif self.leading_suit == card_played.suit:
+            if self.next_leading_player_card[1] < card_played:
+                self.next_leading_player_card = (card_played, self.current_player)
+        else:
+            if not first_round:
+                self.next_leading_player_card[0].add_cards(self.trick)
+                self.end_trick()
+                return self.next_leading_player_card[0]
+        return self.game.get_next_player(self.current_player)
 
-    # def next_round(self, leading_player, verbose=False):
-    #     ''' General round
-    #     '''
-
-    #     next_round_leader = None
-    #     if self.round_counter == 1:
-    #         first_round = True
-    #         leading_player = self.starting_player()
-    #         leading_suit = Suit.S
-    #     else:
-    #         first_round = False
-    #         leading_suit = None
-    #     future_leader = tuple()
-    #     for i in range(self.num_players):
-    #         player_id = (i + leading_player) % self.num_players
-    #         if verbose:
-    #             print("Turn: Player ", player_id)
-    #         current_player = self.players[player_id]
-    #         if current_player.no_cards():
-    #             if not trick and player_id not in self.winners:
-    #             # if not trick and player_id not in self.winners:
-    #                 draw_size = len(self.waste_pile) - 1
-    #                 # draw_size = len(self.waste_pile) - (self.num_players - len(self.winners))
-    #                 random_index = random.randrange(draw_size)
-    #                 current_player.add_card(self.waste_pile.pop(random_index))
-    #             else:
-    #                 if verbose:
-    #                     print("This player has already won.")
-    #                 self.winners[player_id] = self.winners.get(player_id, self.round_counter)
-    #                 continue
-    #         card_played = current_player.next_round(leading_suit, first=first_round)
-    #         if verbose:
-    #             print("Player ", player_id, "played card: ", str(card_played))
-    #         action = tuple([player_id, card_played])
-    #         trick.append(card_played)
-    #         if leading_suit is None or future_leader == tuple():
-    #             leading_suit = card_played.suit
-    #             future_leader = action
-    #         elif leading_suit == card_played.suit:
-    #             if future_leader[1] < card_played:
-    #                 future_leader = action
-    #         else:
-    #             if not first_round:
-    #                 self.players[future_leader[0]].add_cards(trick)
-    #                 return future_leader[0]
-    #         next_round_leader = future_leader[0]
-    #     self.waste_pile += trick
-    #     return next_round_leader
+    def end_trick(self):
+        ''' Ends the trick
+        '''
+        self.game.waste_pile += self.trick
+        self.trick = []
+        self.current_player = None
+        self.next_leading_player_card = None
+        self.leading_suit = None
+        self.done = True
