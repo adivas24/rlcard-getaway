@@ -139,8 +139,38 @@ class GetAwayGame():
 
         return self.round.get_legal_actions(self.players, self.round.current_player)
 
+    def get_state(self, player_id):
+        ''' Return player's state
+
+        Args:
+            player_id (int): player id
+
+        Returns:
+            (dict): The state of the player
+        '''
+        state = self.round.get_state(self.players, player_id)
+        state['num_players'] = self.get_num_players()
+        state['current_player'] = self.round.current_player
+        return state
     def step(self, action):
         ''' Take one step
         '''
         next_player = self.round.step(action)
         return self.get_state(), next_player
+
+    @staticmethod
+    def get_num_actions():
+        ''' Return the number of applicable actions
+
+        Returns:
+            (int): The number of actions. There are 61 actions
+        '''
+        return 53
+
+    def is_over(self):
+        ''' Check if the game is over
+
+        Returns:
+            (boolean): True if the game is over
+        '''
+        return self.round.done
