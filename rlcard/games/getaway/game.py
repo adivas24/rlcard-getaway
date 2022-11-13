@@ -18,7 +18,7 @@ class GetAwayGame():
         self.winners = dict()
         self.num_players = 0
         self.round_counter = 0
-        self.payoffs = [0 for _ in range(self.num_players)]
+        self.payoffs = [-1 for _ in range(self.num_players)]
 
     def configure(self, game_config):
         ''' Specifiy some game specific parameters, such as number of players
@@ -28,7 +28,7 @@ class GetAwayGame():
         ''' Start game after adding players
         '''
         self.num_players = len(self.players)
-        self.payoffs = [0 for _ in range(self.num_players)]
+        self.payoffs = [-1 for _ in range(self.num_players)]
         dealer = GetAwayDealer()
         dealer.deal_cards(self.players)
         self.round_counter = 0
@@ -159,9 +159,9 @@ class GetAwayGame():
             (list): Each entry corresponds to the payoff of one player
         '''
         winner = self.round.winner
-        if winner is not None and len(winner) == 1:
-            self.payoffs[winner[0]] = 1
-            self.payoffs[1 - winner[0]] = -1
+        if winner is not None and len(winner) > 0:
+            for player in winner.keys():
+                self.payoffs[player] = 1
         return self.payoffs
     def get_state(self, player_id):
         ''' Return player's state
