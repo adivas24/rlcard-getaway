@@ -1,7 +1,5 @@
 ''' Driver
 '''
-
-
 from rlcard.games.getaway.game import GetAwayGame
 from rlcard.games.getaway.player import GetAwayPlayer
 

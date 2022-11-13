@@ -18,18 +18,31 @@ class GetAwayGame():
         self.winners = dict()
         self.num_players = 0
         self.round_counter = 0
+        self.payoffs = [0 for _ in range(self.num_players)]
 
+    def configure(self, game_config):
+        ''' Specifiy some game specific parameters, such as number of players
+        '''
+        self.num_players = game_config['game_num_players']
     def init_game(self):
         ''' Start game after adding players
         '''
         self.num_players = len(self.players)
+        self.payoffs = [0 for _ in range(self.num_players)]
         dealer = GetAwayDealer()
         dealer.deal_cards(self.players)
         self.round_counter = 0
         self.current_player_id = self.starting_player()
         GetAwayRound.round_number = 0
         self.round = GetAwayRound(self.players[self.current_player_id], self)
-        return self.current_player_id
+
+        # Save the hisory for stepping back to the last state.
+        self.history = []
+
+        player_id = self.round.current_player
+        state = self.get_state(player_id)
+
+        return state, player_id
         # return self.get_state(), self.current_player_id
 
     def add_player(self, player):
@@ -139,6 +152,17 @@ class GetAwayGame():
 
         return self.round.get_legal_actions(self.players, self.round.current_player)
 
+    def get_payoffs(self):
+        ''' Return the payoffs of the game
+
+        Returns:
+            (list): Each entry corresponds to the payoff of one player
+        '''
+        winner = self.round.winner
+        if winner is not None and len(winner) == 1:
+            self.payoffs[winner[0]] = 1
+            self.payoffs[1 - winner[0]] = -1
+        return self.payoffs
     def get_state(self, player_id):
         ''' Return player's state
 
@@ -155,9 +179,24 @@ class GetAwayGame():
     def step(self, action):
         ''' Take one step
         '''
+        if self.allow_step_back:
+            # First snapshot the current state
+            his_round = deepcopy(self.round)
+            his_players = deepcopy(self.players)
+            self.history.append((his_players, his_round))
         next_player = self.round.step(action)
         return self.get_state(), next_player
 
+    def step_back(self):
+        ''' Return to the previous state of the game
+
+        Returns:
+            (bool): True if the game steps back successfully
+        '''
+        if not self.history:
+            return False
+        self.players, self.round = self.history.pop()
+        return True
     @staticmethod
     def get_num_actions():
         ''' Return the number of applicable actions

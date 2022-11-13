@@ -5,10 +5,12 @@ Get Away Round
 from rlcard.games.getaway.card import Suit
 from rlcard.games.getaway.utils import action2card
 
+
 class GetAwayRound():
     ''' Round class for Get Away
     '''
     round_number = 0
+
     def __init__(self, leading_player, game):
         self.trick = []
         GetAwayRound.round_number += 1
@@ -59,14 +61,14 @@ class GetAwayRound():
         hand = players[player_id].hand
 
         if GetAwayRound.round_number == 1:
-            actions = [card for card in hand if card.suit==Suit.S]
+            actions = [card for card in hand if card.suit == Suit.S]
             if not actions:
                 legal_actions = ["draw"]
             else:
                 legal_actions = actions
 
         else:
-            actions = [card for card in hand if card.suit==self.leading_suit]
+            actions = [card for card in hand if card.suit == self.leading_suit]
             if not actions:
                 legal_actions = ["draw"]
             else:
