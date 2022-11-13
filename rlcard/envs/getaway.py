@@ -18,13 +18,13 @@ class GetAwayEnv(Env):
         self.default_game_config = DEFAULT_GAME_CONFIG
         self.game = Game()
         super().__init__(config)
-        self.state_shape = [[0]*52 for _ in range(self.num_players)]
+        self.state_shape = [[3,4,13] for _ in range(self.num_players)]
         self.action_shape = [None for _ in range(self.num_players)]
 
     def _extract_state(self, state):
-        obs = np.zeros((4, 4, 15), dtype=int)
-        encode_hand(obs[:3], state['hand'])
-        encode_target(obs[3], state['target'])
+        obs = np.zeros((3, 4, 13), dtype=int)
+        encode_hand(obs[:2], state['hand'])
+        encode_target(obs[2], state['target'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         extracted_state['raw_obs'] = state
@@ -57,10 +57,10 @@ class GetAwayEnv(Env):
         '''
         state = {}
         state['num_players'] = self.num_players
-        state['hand_cards'] = [cards2list(player.hand)
+        state['hand_cards'] = [player.hand
                                for player in self.game.players]
-        state['played_cards'] = cards2list(self.game.round.played_cards)
-        state['target'] = self.game.round.target.str
+        state['played_cards'] = self.game.waste_pile
+        state['target'] = self.game.round.trick
         state['current_player'] = self.game.round.current_player
         state['legal_actions'] = self.game.round.get_legal_actions(
             self.game.players, state['current_player'])

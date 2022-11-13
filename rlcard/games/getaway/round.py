@@ -52,3 +52,42 @@ class GetAwayRound():
         self.next_leading_player_card = None
         self.leading_suit = None
         self.done = True
+
+    def get_legal_actions(self, players, player_id):
+
+        legal_actions = []
+        hand = players[player_id].hand
+
+        if GetAwayRound.round_number == 1:
+            actions = [card for card in hand if card.suit==Suit.S]
+            if not actions:
+                legal_actions = ["draw"]
+            else:
+                legal_actions = actions
+
+        else:
+            actions = [card for card in hand if card.suit==self.leading_suit]
+            if not actions:
+                legal_actions = ["draw"]
+            else:
+                legal_actions = actions
+
+        return legal_actions
+
+    def get_state(self, players, player_id):
+        ''' Get player's state
+
+        Args:
+            players (list): The list of UnoPlayer
+            player_id (int): The id of the player
+        '''
+        state = {}
+        player = players[player_id]
+        state['hand'] = player.hand
+        state['target'] = self.trick
+        state['played_cards'] = self.game.waste_pile
+        state['legal_actions'] = self.get_legal_actions(players, player_id)
+        state['num_cards'] = []
+        for player in players:
+            state['num_cards'].append(len(player.hand))
+        return state
