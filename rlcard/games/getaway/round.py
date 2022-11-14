@@ -55,6 +55,11 @@ class GetAwayRound():
             self.end_trick()
         return next_player.get_player_id()
 
+    def add_winner(self, player_id):
+        ''' Marks player as winner
+        '''
+        self.game.winners[player_id] = GetAwayRound.round_number
+
     def end_trick(self):
         ''' Ends the trick
         '''
@@ -62,7 +67,7 @@ class GetAwayRound():
             if player.no_cards():
                 if player != self.leading_player:
                     self.current_player.alive = False
-                    self.game.winners[self.current_player.get_player_id()] = GetAwayRound.round_number
+                    self.add_winner(self.current_player.get_player_id())
         self.game.waste_pile += self.trick
         self.trick = []
         self.current_player = None
@@ -70,7 +75,8 @@ class GetAwayRound():
         self.done = True
 
     def get_legal_actions(self, players, player_id):
-
+        ''' Gets legal actions for the player
+        '''
         legal_actions = []
         hand = players[player_id].hand
         if GetAwayRound.round_number == 1:
@@ -84,15 +90,15 @@ class GetAwayRound():
                 actions = [str(c) for c in hand]
             else:
                 actions = [str(card) for card in hand if card.suit == self.leading_suit]
-            
+
             if not actions:
                 legal_actions = [str(c) for c in hand]
             else:
                 legal_actions = actions
-            
+
             if legal_actions == []:
                 return ["draw"]
-        # print(player_id, legal_actions)
+
         return legal_actions
 
     def get_state(self, players, player_id):

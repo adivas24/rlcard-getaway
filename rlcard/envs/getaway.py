@@ -1,17 +1,22 @@
-import numpy as np
+'''
+ Environment for Get Away
+'''
+
 from collections import OrderedDict
+import numpy as np
 
 from rlcard.envs import Env
 from rlcard.games.getaway import Game
-from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST, encode_hand, encode_target, card_from_index
-# from rlcard.games.uno.utils import cards2list
+from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST
+from rlcard.games.getaway.utils import encode_hand, encode_target, card_from_index
 
 DEFAULT_GAME_CONFIG = {
     'game_num_players': 2,
 }
 
 class GetAwayEnv(Env):
-
+    ''' Get Away Game Environment
+    '''
     def __init__(self, config):
         self.name = 'getaway'
         self.default_game_config = DEFAULT_GAME_CONFIG

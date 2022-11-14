@@ -22,6 +22,9 @@ class GetAwayGame():
         self.round_counter = 0
         self.payoffs = [-1 for _ in range(self.num_players)]
         self.allow_step_back = False
+        self.current_player_id = None
+        self.round = None
+        self.history = []
 
     def configure(self, game_config):
         ''' Specifiy some game specific parameters, such as number of players
@@ -29,6 +32,8 @@ class GetAwayGame():
         self.num_players = game_config['game_num_players']
 
     def get_player_id(self):
+        ''' Getter method for player id
+        '''
         return self.round.current_player.get_player_id()
 
     def init_game(self):
@@ -42,9 +47,6 @@ class GetAwayGame():
         dealer = GetAwayDealer()
         dealer.deal_cards(self.players)
 
-        # for p in self.players:
-        #     p.print_cards()
-        
         self.round_counter = 0
         self.current_player_id = self.starting_player()
         GetAwayRound.round_number = 0
@@ -173,7 +175,7 @@ class GetAwayGame():
         '''
         winner = self.winners
         if winner is not None and len(winner) > 0:
-            for player in winner.keys():
+            for player in winner:
                 self.payoffs[player] = 1
         return self.payoffs
 
@@ -214,6 +216,7 @@ class GetAwayGame():
             return False
         self.players, self.round = self.history.pop()
         return True
+
     @staticmethod
     def get_num_actions():
         ''' Return the number of applicable actions

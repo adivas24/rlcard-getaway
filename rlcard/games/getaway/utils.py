@@ -1,25 +1,12 @@
-import os
-import json
+'''
+Utilities for Get Away
+'''
 import numpy as np
-from collections import OrderedDict
 
-import rlcard
-
-# from rlcard.games.getaway.card import GetAwayCard as Card
 from rlcard.games.getaway.card import Suit, GetAwayCard, ranks, rev_ranks
-# Read required docs
-# ROOT_PATH = rlcard.__path__[0]
 
-# a map of abstract action to its index and a list of abstract action
-# with open(os.path.join(ROOT_PATH, 'games/uno/jsondata/action_space.json'), 'r') as file:
-#     ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
-#     ACTION_LIST = list(ACTION_SPACE.keys())
-
-ACTION_SPACE = {}
-for suit in Suit.__members__.values():
-    for rank in ranks:
-        card = GetAwayCard(suit, rank)
-        ACTION_SPACE[str(card)] = card.get_index()
+cards = [GetAwayCard(suit, rank) for suit in Suit.__members__.values() for rank in ranks]
+ACTION_SPACE = {str(card):card.get_index() for card in cards}
 ACTION_SPACE['draw'] = 52
 
 ACTION_LIST = list(ACTION_SPACE.keys())
@@ -29,40 +16,11 @@ def card_from_index(index):
     '''
     return GetAwayCard(Suit(index//13), rev_ranks[index%13 + 2])
 
-def action2card(action): 
+def action2card(action):
     ''' Fetches card from action
     '''
     return card_from_index(ACTION_SPACE[action])
-# print(ACTION_SPACE,ACTION_LIST)
-# # a map of color to its index
-# COLOR_MAP = {'r': 0, 'g': 1, 'b': 2, 'y': 3}
-#
-# # a map of trait to its index
-# TRAIT_MAP = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
-#              '8': 8, '9': 9, 'skip': 10, 'reverse': 11, 'draw_2': 12,
-#              'wild': 13, 'wild_draw_4': 14}
-#
-# WILD = ['r-wild', 'g-wild', 'b-wild', 'y-wild']
-#
-# WILD_DRAW_4 = ['r-wild_draw_4', 'g-wild_draw_4', 'b-wild_draw_4', 'y-wild_draw_4']
-#
-#
-#
-#
-# def cards2list(cards):
-#     ''' Get the corresponding string representation of cards
-#
-#     Args:
-#         cards (list): list of UnoCards objects
-#
-#     Returns:
-#         (string): string representation of cards
-#     '''
-#     cards_list = []
-#     for card in cards:
-#         cards_list.append(card.get_str())
-#     return cards_list
-#
+
 def hand2dict(hand):
     ''' Get the corresponding dict representation of hand
 
@@ -76,7 +34,7 @@ def hand2dict(hand):
     for card in hand:
         hand_dict[card] = hand_dict.get(card, 0)+1
     return hand_dict
-#
+
 def encode_hand(plane, hand):
     ''' Encode hand and represerve it into plane
 
@@ -87,7 +45,6 @@ def encode_hand(plane, hand):
     Returns:
         (array): 3*4*15 numpy array
     '''
-    # plane = np.zeros((3, 4, 15), dtype=int)
     plane[0] = np.ones((4, 13), dtype=int)
     hand = hand2dict(hand)
     for card, count in hand.items():
@@ -96,7 +53,7 @@ def encode_hand(plane, hand):
         plane[0][color][rank] = 0
         plane[count][color][rank] = 1
     return plane
-#
+
 def encode_target(plane, target):
     ''' Encode target and represerve it into plane
 

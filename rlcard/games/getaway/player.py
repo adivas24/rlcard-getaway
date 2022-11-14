@@ -1,8 +1,6 @@
 '''
 Player class for Get Away
 '''
-import random
-from rlcard.games.getaway.card import ACE_OF_SPADES
 
 class GetAwayPlayer():
     ''' Defines a player
@@ -22,7 +20,10 @@ class GetAwayPlayer():
         return self.player_id
 
     def get_player_cards(self):
+        ''' Getter method for player cards
+        '''
         return self.hand
+
     def add_card(self, card):
         ''' Add card to hand
         '''
@@ -59,37 +60,6 @@ class GetAwayPlayer():
             chosen_idx = int(input("Please enter one of the above option numbers: "))
             if chosen_idx >= 0 and chosen_idx < len(legal_cards):
                 return legal_cards[chosen_idx]
-
-    # TODO: THIS NEEDS TO BE RELOCATED
-    def strategy(self, state, legal_cards):
-        ''' Playing strategy
-        '''
-        if state == "FIRST":
-            if ACE_OF_SPADES in legal_cards:
-                # Playing ace of spades in first round is compulsory.
-                self.hand.remove(ACE_OF_SPADES)
-                return ACE_OF_SPADES
-        if self.player_strategy == "human":
-            random_choice = self.human_prompt(list(legal_cards))
-        else:
-            random_choice = random.choice(list(legal_cards))
-        self.hand.remove(random_choice)
-        return random_choice
-
-    def next_round(self, suit, first = False):
-        ''' Card for subsequent rounds
-        '''
-        if first:
-            state = "FIRST"
-        else:
-            state = None # This should contain state description later
-        if suit is None:
-            legal_card_set = self.hand
-        else:
-            legal_card_set = self.legal_cards(suit)
-        if legal_card_set == set():
-            legal_card_set = self.hand
-        return self.strategy(state, legal_card_set)
 
     def get_state(self, pubilc_cards, legal_actions):
         ''' Returns current player state.
