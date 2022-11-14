@@ -32,5 +32,9 @@ def new_test_function():
     # Init game
     g.init_game()
     # g.print_state()
-    current_lead = -1
+    while len(g.winners) < 3:
+        actions = g.get_legal_actions()
+        # print(g.round.current_player, actions)
+        g.step(actions[0])
+        # input("Wait")
     print(g.winners)

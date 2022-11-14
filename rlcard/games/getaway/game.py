@@ -1,11 +1,12 @@
 '''
 Game Class for Get Away
 '''
-
+from copy import deepcopy
 import random
 from rlcard.games.getaway.dealer import GetAwayDealer
 from rlcard.games.getaway.card import Suit,GetAwayCard
 from rlcard.games.getaway.round import GetAwayRound
+from rlcard.games.getaway.player import GetAwayPlayer
 
 ACE_OF_SPADES = GetAwayCard(Suit.S, "A")
 class GetAwayGame():
@@ -19,6 +20,7 @@ class GetAwayGame():
         self.num_players = 0
         self.round_counter = 0
         self.payoffs = [-1 for _ in range(self.num_players)]
+        self.allow_step_back = False
 
     def configure(self, game_config):
         ''' Specifiy some game specific parameters, such as number of players
@@ -27,6 +29,7 @@ class GetAwayGame():
     def init_game(self):
         ''' Start game after adding players
         '''
+        GetAwayPlayer.playerCount = 0
         self.num_players = len(self.players)
         self.payoffs = [-1 for _ in range(self.num_players)]
         dealer = GetAwayDealer()
@@ -39,7 +42,7 @@ class GetAwayGame():
         # Save the hisory for stepping back to the last state.
         self.history = []
 
-        player_id = self.round.current_player
+        player_id = self.round.current_player.get_player_id()
         state = self.get_state(player_id)
 
         return state, player_id
@@ -150,7 +153,7 @@ class GetAwayGame():
             (list): A list of legal actions
         '''
 
-        return self.round.get_legal_actions(self.players, self.round.current_player)
+        return self.round.get_legal_actions(self.players, self.round.current_player.get_player_id())
 
     def get_payoffs(self):
         ''' Return the payoffs of the game
@@ -185,7 +188,9 @@ class GetAwayGame():
             his_players = deepcopy(self.players)
             self.history.append((his_players, his_round))
         next_player = self.round.step(action)
-        return self.get_state(), next_player
+        if self.round.done:
+            self.round = GetAwayRound(self.players[next_player], self)
+        return self.get_state(next_player), next_player
 
     def step_back(self):
         ''' Return to the previous state of the game
