@@ -3,8 +3,7 @@ from collections import OrderedDict
 
 from rlcard.envs import Env
 from rlcard.games.getaway import Game
-# from rlcard.games.uno.utils import encode_hand, encode_target
-from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST
+from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST, encode_hand, encode_target
 # from rlcard.games.uno.utils import cards2list
 
 DEFAULT_GAME_CONFIG = {

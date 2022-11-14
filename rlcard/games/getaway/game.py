@@ -13,7 +13,8 @@ class GetAwayGame():
     ''' Game environment
     '''
 
-    def __init__(self):
+    def __init__(self, allow_step_back=False, num_players=2):
+        self.allow_step_back = allow_step_back
         self.players = []
         self.waste_pile = []
         self.winners = dict()
@@ -29,11 +30,14 @@ class GetAwayGame():
     def init_game(self):
         ''' Start game after adding players
         '''
+        # Initialize four players to play the game
+        self.players = [Player() for i in range(self.num_players)]
         GetAwayPlayer.playerCount = 0
         self.num_players = len(self.players)
         self.payoffs = [-1 for _ in range(self.num_players)]
         dealer = GetAwayDealer()
         dealer.deal_cards(self.players)
+
         self.round_counter = 0
         self.current_player_id = self.starting_player()
         GetAwayRound.round_number = 0

@@ -115,5 +115,5 @@ def encode_target(plane, target):
     for card in target:
         color = card.suit.value
         rank = ranks[card.rank]
-        plane[color][trait] = 1
+        plane[color][rank] = 1
     return plane
