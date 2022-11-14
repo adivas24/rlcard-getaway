@@ -74,10 +74,7 @@ def hand2dict(hand):
     '''
     hand_dict = {}
     for card in hand:
-        if card not in hand_dict:
-            hand_dict[card] = 1
-        else:
-            hand_dict[card] += 1
+        hand_dict[card] = hand_dict.get(card, 0)+1
     return hand_dict
 #
 def encode_hand(plane, hand):
@@ -95,7 +92,7 @@ def encode_hand(plane, hand):
     hand = hand2dict(hand)
     for card, count in hand.items():
         color = card.suit.value
-        rank = ranks[card.rank]
+        rank = ranks[card.rank]-2
         plane[0][color][rank] = 0
         plane[count][color][rank] = 1
     return plane
@@ -114,6 +111,6 @@ def encode_target(plane, target):
 
     for card in target:
         color = card.suit.value
-        rank = ranks[card.rank]
+        rank = ranks[card.rank]-2
         plane[color][rank] = 1
     return plane

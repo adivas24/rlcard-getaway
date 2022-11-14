@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from rlcard.envs import Env
 from rlcard.games.getaway import Game
-from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST, encode_hand, encode_target
+from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST, encode_hand, encode_target, card_from_index
 # from rlcard.games.uno.utils import cards2list
 
 DEFAULT_GAME_CONFIG = {
@@ -36,6 +36,10 @@ class GetAwayEnv(Env):
         return np.array(self.game.get_payoffs())
 
     def _decode_action(self, action_id):
+        if action_id == 52:
+            return "draw"
+        else:
+            return str(card_from_index(action_id))
         legal_ids = self._get_legal_actions()
         if action_id in legal_ids:
             return ACTION_LIST[action_id]
@@ -64,3 +68,6 @@ class GetAwayEnv(Env):
         state['legal_actions'] = self.game.round.get_legal_actions(
             self.game.players, state['current_player'])
         return state
+
+    def is_over(self):
+        return len(self.game.winners) == self.game.num_players-1

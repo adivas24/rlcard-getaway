@@ -18,7 +18,7 @@ class GetAwayGame():
         self.players = []
         self.waste_pile = []
         self.winners = dict()
-        self.num_players = 0
+        self.num_players = num_players
         self.round_counter = 0
         self.payoffs = [-1 for _ in range(self.num_players)]
         self.allow_step_back = False
@@ -27,17 +27,24 @@ class GetAwayGame():
         ''' Specifiy some game specific parameters, such as number of players
         '''
         self.num_players = game_config['game_num_players']
+
+    def get_player_id(self):
+        return self.round.current_player.get_player_id()
+
     def init_game(self):
         ''' Start game after adding players
         '''
         # Initialize four players to play the game
-        self.players = [Player() for i in range(self.num_players)]
         GetAwayPlayer.playerCount = 0
+        self.players = [GetAwayPlayer() for _ in range(self.num_players)]
         self.num_players = len(self.players)
         self.payoffs = [-1 for _ in range(self.num_players)]
         dealer = GetAwayDealer()
         dealer.deal_cards(self.players)
 
+        # for p in self.players:
+        #     p.print_cards()
+        
         self.round_counter = 0
         self.current_player_id = self.starting_player()
         GetAwayRound.round_number = 0
@@ -48,7 +55,6 @@ class GetAwayGame():
 
         player_id = self.round.current_player.get_player_id()
         state = self.get_state(player_id)
-
         return state, player_id
         # return self.get_state(), self.current_player_id
 
@@ -66,7 +72,7 @@ class GetAwayGame():
             if self.players[next_id].alive:
                 return self.players[next_id]
             next_id = (next_id + 1) % self.num_players
-        return None
+        return self.players[first_id]
 
     def print_state(self):
         ''' Prints current state
@@ -165,11 +171,12 @@ class GetAwayGame():
         Returns:
             (list): Each entry corresponds to the payoff of one player
         '''
-        winner = self.round.winner
+        winner = self.winners
         if winner is not None and len(winner) > 0:
             for player in winner.keys():
                 self.payoffs[player] = 1
         return self.payoffs
+
     def get_state(self, player_id):
         ''' Return player's state
 
@@ -181,8 +188,9 @@ class GetAwayGame():
         '''
         state = self.round.get_state(self.players, player_id)
         state['num_players'] = self.get_num_players()
-        state['current_player'] = self.round.current_player
+        state['current_player'] = self.round.current_player.get_player_id()
         return state
+
     def step(self, action):
         ''' Take one step
         '''

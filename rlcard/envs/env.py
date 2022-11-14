@@ -77,7 +77,6 @@ class Env(object):
         '''
         if not raw_action:
             action = self._decode_action(action)
-
         self.timestep += 1
         # Record the action for human interface
         self.action_recorder.append((self.get_player_id(), action))
@@ -144,7 +143,7 @@ class Env(object):
                 action, _ = self.agents[player_id].eval_step(state)
             else:
                 action = self.agents[player_id].step(state)
-
+  
             # Environment steps
             next_state, next_player_id = self.step(action, self.agents[player_id].use_raw)
             # Save action
@@ -153,7 +152,6 @@ class Env(object):
             # Set the state and player
             state = next_state
             player_id = next_player_id
-
             # Save state.
             if not self.game.is_over():
                 trajectories[player_id].append(state)

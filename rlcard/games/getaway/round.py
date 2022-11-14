@@ -80,13 +80,19 @@ class GetAwayRound():
             else:
                 legal_actions = actions
         else:
-            actions = [str(card) for card in hand if card.suit == self.leading_suit]
+            if self.leading_suit is None:
+                actions = [str(c) for c in hand]
+            else:
+                actions = [str(card) for card in hand if card.suit == self.leading_suit]
+            
             if not actions:
                 legal_actions = [str(c) for c in hand]
             else:
                 legal_actions = actions
+            
             if legal_actions == []:
                 return ["draw"]
+        # print(player_id, legal_actions)
         return legal_actions
 
     def get_state(self, players, player_id):
@@ -96,6 +102,7 @@ class GetAwayRound():
             players (list): The list of UnoPlayer
             player_id (int): The id of the player
         '''
+        # print("Get state", player_id)
         state = {}
         player = players[player_id]
         state['hand'] = player.hand
