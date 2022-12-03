@@ -21,6 +21,26 @@ class GetAwayRound():
         self.game = game
         self.done = False
 
+    def get_round_info(self):
+        return (
+            self.trick,
+            GetAwayRound.round_number,
+            self.current_player,
+            self.leading_player,
+            self.next_leading_player_card,
+            self.leading_suit,
+            self.done
+        )
+    
+    def set_round_info(self, round_info):
+        self.trick = round_info[0]
+        GetAwayRound.round_number = round_info[1]
+        self.current_player = round_info[2]
+        self.leading_player = round_info[3]
+        self.next_leading_player_card = round_info[4]
+        self.leading_suit = round_info[5]
+        self.done = round_info[6]
+
     def step(self, action):
         ''' Takes one step in the round
         '''
@@ -30,7 +50,7 @@ class GetAwayRound():
             self.leading_suit = Suit.S
         if action == "draw":
             draw_size = len(self.game.waste_pile) - 1
-            random_index = self.game.random.randrange(draw_size)
+            random_index = self.game.random.randint(draw_size)
             card_played = self.game.waste_pile.pop(random_index)
         else:
             card_played = action2card(action)

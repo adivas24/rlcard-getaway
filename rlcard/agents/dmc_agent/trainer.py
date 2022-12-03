@@ -220,7 +220,7 @@ class DMCTrainer:
 
         # Initialize queues
         actor_processes = []
-        ctx = mp.get_context('spawn')
+        ctx = mp.get_context('fork')
         free_queue = {}
         full_queue = {}
         for device in self.device_iterator:

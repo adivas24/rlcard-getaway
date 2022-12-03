@@ -7,12 +7,19 @@ class GetAwayPlayer():
     '''
     playerCount = 0
 
-    def __init__(self, strategy = "random"):
+    def __init__(self):
         self.hand = set()
         self.player_id = GetAwayPlayer.playerCount
         GetAwayPlayer.playerCount += 1
-        self.player_strategy = strategy
         self.alive = True
+
+    def get_player_info(self):
+        return (self.hand.copy(), self.player_id, self.alive)
+
+    def set_player_info(self, player_info):
+        self.hand = player_info[0]
+        self.player_id = player_info[1]
+        self.alive = player_info[2]
 
     def get_player_id(self):
         ''' Player id

@@ -3,6 +3,7 @@ Game Class for Get Away
 '''
 from copy import deepcopy
 import random
+import numpy as np
 from rlcard.games.getaway.dealer import GetAwayDealer
 from rlcard.games.getaway.card import Suit,GetAwayCard
 from rlcard.games.getaway.round import GetAwayRound
@@ -21,11 +22,10 @@ class GetAwayGame():
         self.num_players = num_players
         self.round_counter = 0
         self.payoffs = [-1 for _ in range(self.num_players)]
-        self.allow_step_back = False
         self.current_player_id = None
         self.round = None
         self.history = []
-        self.random = random
+        self.random = np.random.RandomState()
 
     def configure(self, game_config):
         ''' Specifiy some game specific parameters, such as number of players
@@ -202,9 +202,12 @@ class GetAwayGame():
         '''
         if self.allow_step_back:
             # First snapshot the current state
-            his_round = deepcopy(self.round)
-            his_players = deepcopy(self.players)
-            self.history.append((his_players, his_round))
+            his_round = self.round.get_round_info()
+            his_players = [p.get_player_info() for p in self.players]
+            his_waste_pile = self.waste_pile[:]
+            his_winners = self.winners
+            game_info = (self.round_counter, self.current_player_id)
+            self.history.append((his_players, his_round, his_waste_pile, his_winners, game_info))
         next_player = self.round.step(action)
         if self.round.done:
             self.round = GetAwayRound(self.players[next_player], self)
@@ -218,7 +221,11 @@ class GetAwayGame():
         '''
         if not self.history:
             return False
-        self.players, self.round = self.history.pop()
+        player_info, round_info, self.waste_pile, self.winners, game_info = self.history.pop()
+        self.round_counter, self.current_player_id = game_info
+        for p, p_info in zip(self.players, player_info):
+            p.set_player_info(p_info)
+        self.round.set_round_info(round_info)
         return True
 
     @staticmethod
