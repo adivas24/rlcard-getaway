@@ -29,14 +29,14 @@ def load_model(model_path, env=None, position=None, device=None):
     else:  # A model in the model zoo
         from rlcard import models
         agent = models.load(model_path).agents[position]
-    
+
     return agent
 
 def evaluate(args):
 
     # Check whether gpu is available
     device = get_device()
-        
+
     # Seed numpy, torch, random
     set_seed(args.seed)
 
@@ -69,6 +69,7 @@ if __name__ == '__main__':
             'no-limit-holdem',
             'uno',
             'gin-rummy',
+            'getaway'
         ],
     )
     parser.add_argument(

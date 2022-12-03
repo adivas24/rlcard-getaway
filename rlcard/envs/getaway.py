@@ -11,7 +11,7 @@ from rlcard.games.getaway.utils import ACTION_SPACE, ACTION_LIST
 from rlcard.games.getaway.utils import encode_hand, encode_target, card_from_index
 
 DEFAULT_GAME_CONFIG = {
-    'game_num_players': 2,
+    'game_num_players': 4,
 }
 
 class GetAwayEnv(Env):

@@ -13,7 +13,7 @@ class GetAwayGame():
     ''' Game environment
     '''
 
-    def __init__(self, allow_step_back=False, num_players=2):
+    def __init__(self, allow_step_back=False, num_players=4):
         self.allow_step_back = allow_step_back
         self.players = []
         self.waste_pile = []
@@ -25,6 +25,7 @@ class GetAwayGame():
         self.current_player_id = None
         self.round = None
         self.history = []
+        self.random = random
 
     def configure(self, game_config):
         ''' Specifiy some game specific parameters, such as number of players
@@ -89,7 +90,6 @@ class GetAwayGame():
     def starting_player(self):
         ''' Find the player who starts
         '''
-        print("Finding player with Ace of spades")
         for player in self.players:
             if ACE_OF_SPADES in player.hand:
                 return player.player_id
@@ -174,9 +174,13 @@ class GetAwayGame():
             (list): Each entry corresponds to the payoff of one player
         '''
         winner = self.winners
+        payoff = 1
         if winner is not None and len(winner) > 0:
-            for player in winner:
-                self.payoffs[player] = 1
+            for player,_ in sorted(winner.items(),
+                        key=lambda item: item[1],
+                        reverse=True):
+                self.payoffs[player] = payoff
+                payoff += 1
         return self.payoffs
 
     def get_state(self, player_id):
