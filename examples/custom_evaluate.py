@@ -41,12 +41,13 @@ def evaluate(seed):
     set_seed(seed)
 
     # Make the environment with seed
-    env = rlcard.make('getaway', config={'seed': seed})
+    env = rlcard.make('uno', config={'seed': seed})
 
     # Load models
     # models = ['random', 'random', 'experiments/getaway_dqn_try_2/model.pth', 'experiments/getaway_dqn_try_2/model.pth']
     # models = ['random', 'experiments/getaway_dqn_try_2/model.pth', 'random', 'experiments/getaway_dqn_try_2/model.pth']
-    models = ['random', 'experiments/getaway_dqn_try_2/model.pth', 'experiments/getaway_dqn_try_2/model.pth', 'random']
+    # models = ['experiments/nfsp-result-linear-rewards_4player/model.pth','random','random','random']
+    models = ['experiments/uno_dqn/model.pth','random','random','random']
     agents = []
     for position, model_path in enumerate(models):
         agents.append(load_model(model_path, env, position, device))
@@ -67,6 +68,7 @@ if __name__ == '__main__':
     from tqdm import tqdm
     for seed in tqdm(range(counter)):
         rewards = evaluate(seed*seed*562353647789 % 458441)
+        print(cum_rewards,rewards)
         cum_rewards = [cum_rewards[i]+rewards[i] for i in range(len(cum_rewards))]
         intermediate_rewards.append([r/(seed+1) for r in cum_rewards])
     print([r/counter for r in cum_rewards])
@@ -78,4 +80,9 @@ if __name__ == '__main__':
     plt.plot(vector[1], 'b')
     plt.plot(vector[2], 'g')
     plt.plot(vector[3], 'y')
+    plt.legend(["NFSP Agent","Random Agent", "Random Agent", "Random Agent"])
+    # plt.legend(["NFSP Agent","Random Agent"])
+    plt.title("NFSP : Linear Rewards")
+    plt.xlabel("Runs")
+    plt.ylabel("Rewards")
     plt.show()
